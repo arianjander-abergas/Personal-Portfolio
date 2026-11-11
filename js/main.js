@@ -13,7 +13,48 @@
   document.title = `${C.name} | Portfolio`;
   $("brand").textContent = C.initials;
   $("heroEyebrow").textContent = C.hero.eyebrow;
-  $("heroName").textContent = C.name;
+  const hint = C.nameHint;
+  if (hint && hint.target && C.name.includes(hint.target)) {
+    const at = C.name.indexOf(hint.target);
+    $("heroName").innerHTML =
+      esc(C.name.slice(0, at)) +
+      `<span class="hint" tabindex="0" aria-describedby="nameHint">${esc(hint.target)}` +
+      `<span class="hint__balloon" id="nameHint" role="tooltip">${esc(hint.text)}</span></span>` +
+      esc(C.name.slice(at + hint.target.length));
+    // Tap support: hover and keyboard focus are handled in CSS.
+    const hintEl = document.querySelector(".hint");
+    hintEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hintEl.classList.toggle("is-open");
+    });
+    document.addEventListener("click", () => hintEl.classList.remove("is-open"));
+    document.addEventListener("keydown", (e) => e.key === "Escape" && hintEl.classList.remove("is-open"));
+  } else {
+    $("heroName").textContent = C.name;
+  }
+
+  /* ---------- Theme: colour comic / black-and-white comic ---------- */
+  const root = document.documentElement;
+  const themeBtn = $("themeToggle");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const applyTheme = (dark) => {
+    root.dataset.theme = dark ? "dark" : "light";
+    const label = dark ? "Switch to colour mode" : "Switch to black and white mode";
+    themeBtn.setAttribute("aria-pressed", String(dark));
+    themeBtn.setAttribute("aria-label", label);
+    themeBtn.title = label;
+    if (themeMeta) themeMeta.content = dark ? "#0b0b0b" : "#1d68f0";
+  };
+  applyTheme(root.dataset.theme === "dark");
+  themeBtn.addEventListener("click", () => {
+    const dark = root.dataset.theme !== "dark";
+    applyTheme(dark);
+    try {
+      localStorage.setItem("theme", dark ? "dark" : "light");
+    } catch (e) {
+      /* storage unavailable: the choice just won't be remembered */
+    }
+  });
   $("heroRole").textContent = C.hero.role;
   $("heroTagline").textContent = C.hero.tagline;
 

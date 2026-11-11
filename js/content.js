@@ -4,8 +4,10 @@
   Nothing else needs to be edited to update the text on the site.
 */
 const CONTENT = {
-  name: "[YOUR FULL NAME]",
-  initials: "[YN]",
+  name: "Arian Jander C. Abergas",
+  initials: "AJA",
+  // Hovering (or tapping) this part of the name pops up a thought balloon with the text.
+  nameHint: { target: "C.", text: "Cristobal" },
 
   hero: {
     eyebrow: "Portfolio · 2026",
@@ -34,23 +36,27 @@ const CONTENT = {
   },
 
   skills: [
-    { group: "Languages", items: ["[LANGUAGE 1]", "[LANGUAGE 2]", "[LANGUAGE 3]"] },
-    { group: "Web", items: ["HTML5", "CSS3", "JavaScript"] },
+    { group: "Languages", items: ["PHP", "JavaScript", "SQL", "HTML5", "CSS3"] },
     { group: "Frameworks", items: ["[FRAMEWORK 1]", "[FRAMEWORK 2]"] },
-    { group: "Databases", items: ["[DATABASE 1]", "[DATABASE 2]"] },
-    { group: "Tools", items: ["Git", "VS Code", "[TOOL 3]"] },
+    { group: "Databases", items: ["PostgreSQL", "Supabase"] },
+    { group: "Tools", items: ["Git", "VS Code", "XAMPP", "Apache", "Docker", "Nginx"] },
   ],
 
   projects: [
     {
-      title: "[PROJECT 1 NAME]",
-      year: "[YEAR]",
-      type: "[TYPE, e.g. Mobile App]",
+      title: "Campus Event Hub",
+      year: "2026",
+      type: "Web System",
       image: "", // e.g. "assets/project-1.png" — optional
-      description: "[What the project does and who it is for, in two or three sentences.]",
-      role: "[YOUR ROLE IN THE PROJECT]",
-      tech: ["[TECH 1]", "[TECH 2]", "[TECH 3]"],
-      highlights: ["[Highlight or result 1]", "[Highlight or result 2]"],
+      description:
+        "A campus event platform for La Consolacion University Philippines. Students sign up with their school email, browse every event on one calendar, register, and evaluate the events they attended. Admins publish events, track registrations and attendance, and read reports.",
+      role: "Lead Developer, in a team of five",
+      tech: ["PHP 8", "JavaScript", "HTML & CSS", "PostgreSQL", "Supabase"],
+      highlights: [
+        "Three role levels (Student / Faculty, Admin, Super Admin), with event approvals enforced by database rules",
+        "Registration limits by capacity, deadline, audience and year level, plus attendance tracking and printable sheets",
+        "In-site and email notifications, and installable on a phone's home screen like an app",
+      ],
       links: [], // e.g. [{ label: "GitHub", url: "https://github.com/..." }]
     },
     {

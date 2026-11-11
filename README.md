@@ -18,6 +18,7 @@ A responsive personal portfolio website built with plain HTML, CSS and JavaScrip
 - HTML5, CSS3, JavaScript (no frameworks, no build step)
 - Google Fonts (Bangers, Comic Neue)
 - Comic-book visual style: ink outlines, halftone dots, speech bubbles and panel layouts
+- Two themes: full-colour comic and a black-and-white comic dark mode (toggle in the top bar, remembered between visits)
 
 ## Project structure
 

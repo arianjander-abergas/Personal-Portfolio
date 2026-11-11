@@ -16,7 +16,8 @@ A responsive personal portfolio website built with plain HTML, CSS and JavaScrip
 ## Built with
 
 - HTML5, CSS3, JavaScript (no frameworks, no build step)
-- Google Fonts (Space Grotesk, Inter)
+- Google Fonts (Bangers, Comic Neue)
+- Comic-book visual style: ink outlines, halftone dots, speech bubbles and panel layouts
 
 ## Project structure
 

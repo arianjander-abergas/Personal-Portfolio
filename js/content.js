@@ -20,7 +20,8 @@ const CONTENT = {
   },
 
   about: {
-    photo: "", // e.g. "assets/profile.jpg" — leave empty to show your initials instead
+    photo: "assets/profile.jpg", // leave empty ("") to show your initials instead
+    photoCaption: "That's me!", // the little caption box on the photo; set to "" to hide it
     paragraphs: [
       "I'm a fourth-year BS Information Technology student at La Consolacion University Philippines. I build full-stack web systems with PHP, JavaScript and Supabase, and I was group leader and lead developer of our capstone project, Campus Event Hub.",
       "I also have hands-on experience in technical support and hardware troubleshooting. I'm looking for an opportunity to apply my skills in software development and IT support while I keep growing in a professional setting.",
@@ -47,6 +48,7 @@ const CONTENT = {
       items: ["Git / GitHub", "VS Code", "Android Studio", "XAMPP", "Apache", "Docker", "Nginx", "Vercel", "Microsoft Excel & Access"],
     },
     { group: "IT Support", items: ["Hardware troubleshooting", "Technical support"] },
+    { group: "Creative", items: ["Photographer", "Videographer", "Editor"] },
     { group: "Soft Skills", items: ["Leadership", "Problem-solving", "Customer service", "Creative thinking"] },
   ],
 

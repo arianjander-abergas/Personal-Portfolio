@@ -6,7 +6,6 @@ Most of the site is filled in from the resume. These items are still missing or 
 - [ ] **Graduation year:** the site says "Expected 2027" (it was marked unconfirmed on the resume)
 
 ## Optional, makes the site stronger
-- [ ] **Profile photo:** save as `assets/profile.jpg` and set `about.photo`
 - [ ] **Project screenshots:** save in `assets/` and set each project's `image`
 - [ ] **Microsoft Excel and Access certificate:** removed for now. To add it back, put it in `achievements` in `js/content.js` with its date, provider and picture.
 - [ ] **More seminars or awards:** add them to `seminars` or `achievements` in `js/content.js`

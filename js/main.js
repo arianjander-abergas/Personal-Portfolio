@@ -123,9 +123,17 @@
       );
   }
 
-  $("aboutPhoto").innerHTML = C.about.photo
-    ? `<img src="${esc(C.about.photo)}" alt="Portrait of ${esc(C.name)}">`
-    : `<span aria-hidden="true">${esc(C.initials)}</span>`;
+  // With a photo: a comic panel (ink frame, halftone shadow, caption box and a small burst).
+  // Without one: the initials on a halftone card.
+  if (C.about.photo) {
+    $("aboutPhoto").classList.add("has-photo");
+    $("aboutPhoto").innerHTML =
+      `<div class="about__frame"><img src="${esc(C.about.photo)}" alt="Photo of ${esc(C.name)}"></div>` +
+      (C.about.photoCaption ? `<span class="about__caption">${esc(C.about.photoCaption)}</span>` : "") +
+      `<span class="about__burst" aria-hidden="true">!</span>`;
+  } else {
+    $("aboutPhoto").innerHTML = `<span aria-hidden="true">${esc(C.initials)}</span>`;
+  }
   $("aboutText").innerHTML = C.about.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("");
   $("education").innerHTML = C.about.education
     .map((e) => `<li><time>${esc(e.years)}</time><h4>${esc(e.school)}</h4><p>${esc(e.detail)}</p></li>`)

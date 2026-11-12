@@ -30,18 +30,3 @@ js/content.js       all personal content (edit this file to update the site)
 js/main.js          rendering, navigation and interactions
 assets/             images, favicon, resume
 ```
-
-## Run locally
-
-Open `index.html` in a browser, or serve the folder:
-
-```
-npx serve .
-```
-
-## Deploy on Vercel
-
-1. Go to [vercel.com](https://vercel.com) and log in with GitHub.
-2. Click **Add New → Project** and import the `personal-portfolio` repository.
-3. Leave Framework Preset as **Other** and the build settings empty.
-4. Click **Deploy**, then open the generated URL and test every link.

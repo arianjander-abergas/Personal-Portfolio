@@ -11,7 +11,63 @@
 
   /* ---------- Render content ---------- */
   document.title = `${C.name} | Portfolio`;
-  $("brand").textContent = C.initials;
+  /* ---------- Top-left badge: view counter (falls back to initials) ---------- */
+  const brand = $("brand");
+  const showInitials = () => {
+    brand.classList.remove("nav__brand--views");
+    brand.textContent = C.initials;
+    brand.setAttribute("aria-label", "Home");
+    brand.removeAttribute("title");
+  };
+  const vc = C.viewCounter;
+  if (!vc || !vc.namespace) {
+    showInitials();
+  } else {
+    brand.classList.add("nav__brand--views");
+    brand.title = "Site views";
+    brand.innerHTML =
+      '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>' +
+      '<circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg>' +
+      '<span id="viewCount">…</span><small>views</small>';
+    // A visit is counted once per browser session, so refreshing does not inflate the number.
+    // Local previews (localhost or a file opened from disk) only read the count and never add to it.
+    const isLocal = /^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname);
+    let counted = false;
+    try {
+      counted = sessionStorage.getItem("viewCounted") === "1";
+    } catch (e) {
+      /* storage unavailable: fall through and count the visit */
+    }
+    const action = isLocal || counted ? "get" : "hit";
+    const url = `https://abacus.jasoncameron.dev/${action}/${encodeURIComponent(vc.namespace)}/${encodeURIComponent(vc.key || "views")}`;
+    fetch(url)
+      .then((r) => (r.status === 404 ? { value: 0 } : r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d) => {
+        const total = Math.max(0, Number(d.value) || 0);
+        if (action === "hit") {
+          try {
+            sessionStorage.setItem("viewCounted", "1");
+          } catch (e) {
+            /* ignore */
+          }
+        }
+        const out = $("viewCount");
+        brand.setAttribute("aria-label", `Home. ${total.toLocaleString()} site views`);
+        if (reduceMotion || total < 2) {
+          out.textContent = total.toLocaleString();
+          return;
+        }
+        const start = performance.now();
+        const tick = (now) => {
+          const t = Math.min(1, (now - start) / 900);
+          out.textContent = Math.round(total * (1 - Math.pow(1 - t, 3))).toLocaleString();
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      })
+      .catch(showInitials); // counter service unreachable: show the initials rather than a broken badge
+  }
   $("heroEyebrow").textContent = C.hero.eyebrow;
   const hint = C.nameHint;
   if (hint && hint.target && C.name.includes(hint.target)) {
@@ -96,18 +152,43 @@
     )
     .join("");
 
-  $("achievementList").innerHTML = C.achievements
-    .map(
-      (a) => `<li class="achievement reveal">
-        <span class="achievement__date">${esc(a.date)}</span>
-        <div><h3>${esc(a.title)}</h3><p class="achievement__issuer">${esc(a.issuer)}</p></div>
-        <div class="achievement__side">
+  // One card per certificate. Cards with an image get a thumbnail that opens the full-size viewer.
+  const certCard = (a) => `<li class="achievement reveal${a.image ? " has-image" : ""}">
+      ${
+        a.image
+          ? `<button class="achievement__thumb" type="button" data-full="${esc(a.image)}" data-caption="${esc(a.title)}" aria-label="View certificate: ${esc(a.title)}">
+               <img src="${esc(a.image)}" alt="" loading="lazy">
+             </button>`
+          : ""
+      }
+      <div class="achievement__body">
+        <div class="achievement__meta">
           <span class="badge">${esc(a.kind)}</span>
-          ${isUrl(a.link) ? `<a class="link" href="${esc(a.link)}"${ext(a.link)}>View</a>` : ""}
+          <span class="achievement__date">${esc(a.date)}</span>
         </div>
-      </li>`
-    )
-    .join("");
+        <h3>${esc(a.title)}</h3>
+        <p class="achievement__issuer">${esc(a.issuer)}</p>
+        ${isUrl(a.link) ? `<a class="link" href="${esc(a.link)}"${ext(a.link)}>Verify</a>` : ""}
+      </div>
+    </li>`;
+  $("achievementList").innerHTML = C.achievements.map(certCard).join("");
+  const seminars = C.seminars || [];
+  $("seminarList").innerHTML = seminars.map(certCard).join("");
+  if (!seminars.length) $("seminarCol").hidden = true;
+
+  /* ---------- Certificate viewer ---------- */
+  const lightbox = $("lightbox");
+  document.addEventListener("click", (e) => {
+    const thumb = e.target.closest(".achievement__thumb");
+    if (!thumb) return;
+    if (!lightbox.showModal) return window.open(thumb.dataset.full, "_blank", "noopener");
+    $("lightboxImg").src = thumb.dataset.full;
+    $("lightboxImg").alt = `Certificate: ${thumb.dataset.caption}`;
+    $("lightboxCap").textContent = thumb.dataset.caption;
+    lightbox.showModal();
+  });
+  // clicking the dark area around the picture closes it (Esc and the X button also work)
+  lightbox.addEventListener("click", (e) => e.target === lightbox && lightbox.close());
 
   $("contactBlurb").textContent = C.contact.blurb;
   $("contactActions").innerHTML =

@@ -1,44 +1,17 @@
 # Information still needed
 
-The site currently shows `[PLACEHOLDER]` text. Send the details below (or type them straight into `js/content.js`). Do not submit while any `[` placeholder remains.
+Most of the site is filled in from the resume. These items are still missing or need confirming. All text lives in `js/content.js`.
 
-## Home
-- [ ] Full name, and initials for the logo
-- [ ] Role or title (for example: "IT Student & Aspiring Backend Developer")
-- [ ] One-line tagline
+## Please confirm
+- [ ] **Graduation year:** the site says "Expected 2027" (it was marked unconfirmed on the resume)
 
-## About Me
-- [ ] 2 to 4 sentences about yourself
-- [ ] College: school name, course, years (or expected graduation)
-- [ ] Earlier schooling you want shown (senior high, strand, years)
-- [ ] A profile photo (save as `assets/profile.jpg`)
+## Optional, makes the site stronger
+- [ ] **Profile photo:** save as `assets/profile.jpg` and set `about.photo`
+- [ ] **Project screenshots:** save in `assets/` and set each project's `image`
+- [ ] **Microsoft Excel and Access certificate:** removed for now. To add it back, put it in `achievements` in `js/content.js` with its date, provider and picture.
+- [ ] **More seminars or awards:** add them to `seminars` or `achievements` in `js/content.js`
+- [ ] **Resume buttons:** save a PDF as `assets/resume.pdf` and set `contact.resume`. The file becomes public, so consider a version without your phone number and home address.
+- [ ] **Campus Event Hub link:** the repo is private, so the card has no link. Add one if you make it public or host a live demo.
 
-## Skills
-- [ ] Programming languages
-- [ ] Web technologies
-- [ ] Frameworks or engines
-- [ ] Databases
-- [ ] Tools and IDEs
-
-## Projects (at least 3)
-For each project:
-- [ ] Name, year, and type (mobile app, website, game, etc.)
-- [ ] What it does, in 2 to 3 sentences
-- [ ] Your role
-- [ ] Technologies used
-- [ ] 2 to 3 highlights or results
-- [ ] A screenshot (optional, save in `assets/`)
-- [ ] GitHub or live demo link (optional)
-
-## Achievements
-For each certificate, award or seminar:
-- [ ] Title
-- [ ] Who issued or organized it
-- [ ] Month and year
-- [ ] Image or verification link (optional)
-
-## Contact
-- [ ] Email address
-- [ ] LinkedIn URL (the link stays hidden until this is filled in)
-- [ ] Any other professional link
-- [ ] Resume PDF (optional, save as `assets/resume.pdf`)
+## Deployment
+- [ ] Make the Vercel site public: Project Settings, Deployment Protection, turn off Vercel Authentication

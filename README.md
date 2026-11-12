@@ -2,7 +2,7 @@
 
 A responsive personal portfolio website built with plain HTML, CSS and JavaScript, deployed on Vercel.
 
-**Live site:** _add your Vercel URL here after deploying_
+**Live site:** https://personal-portfolio-ceh7.vercel.app
 
 ## Sections
 
@@ -10,7 +10,7 @@ A responsive personal portfolio website built with plain HTML, CSS and JavaScrip
 2. **About Me** – personal introduction and educational background
 3. **Skills** – technical and programming skills
 4. **Projects** – completed projects and activities
-5. **Achievements** – certificates, awards and seminars
+5. **Achievements & Seminars** – certificates on the left, seminars on the right, each with a viewable certificate
 6. **Contact Me** – email and professional links
 
 ## Built with
@@ -18,6 +18,7 @@ A responsive personal portfolio website built with plain HTML, CSS and JavaScrip
 - HTML5, CSS3, JavaScript (no frameworks, no build step)
 - Google Fonts (Bangers, Comic Neue)
 - Comic-book visual style: ink outlines, halftone dots, speech bubbles and panel layouts
+- View counter in the top-left corner (count kept by the free Abacus counter service)
 - Two themes: full-colour comic and a black-and-white comic dark mode (toggle in the top bar, remembered between visits)
 
 ## Project structure

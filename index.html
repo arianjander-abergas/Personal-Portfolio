@@ -21,7 +21,7 @@
   <div class="progress" id="progress" aria-hidden="true"></div>
 
   <header class="nav" id="nav">
-    <a class="nav__brand" href="#home" id="brand" aria-label="Home"></a>
+    <a class="nav__brand" href="#home" id="brand" aria-label="Home"></a><!-- shows the view counter; falls back to initials -->
     <div class="nav__right">
       <nav class="nav__links" id="navLinks" aria-label="Main">
         <a href="#home">Home</a>
@@ -110,9 +110,18 @@
       <div class="wrap">
         <header class="section__head reveal">
           <span class="section__num">04</span>
-          <h2>Achievements</h2>
+          <h2>Achievements &amp; Seminars</h2>
         </header>
-        <ul class="achievements" id="achievementList"></ul>
+        <div class="split">
+          <div class="split__col">
+            <h3 class="split__title reveal">Achievements</h3>
+            <ul class="achievements" id="achievementList"></ul>
+          </div>
+          <div class="split__col" id="seminarCol">
+            <h3 class="split__title split__title--alt reveal">Seminars</h3>
+            <ul class="achievements" id="seminarList"></ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -127,6 +136,13 @@
       </div>
     </section>
   </main>
+
+  <!-- full-size certificate viewer -->
+  <dialog class="lightbox" id="lightbox" aria-labelledby="lightboxCap">
+    <form method="dialog"><button class="icon-btn lightbox__close" aria-label="Close">&#10005;</button></form>
+    <img id="lightboxImg" src="" alt="">
+    <p id="lightboxCap"></p>
+  </dialog>
 
   <footer class="footer">
     <div class="wrap footer__inner">

@@ -142,7 +142,7 @@ const CONTENT = {
   contact: {
     blurb: "Looking for someone in software, website, full stack development or IT support, or have a question about my work? My inbox is open.",
     email: "arianjanderabergas@gmail.com",
-    resume: "", // e.g. "assets/resume.pdf" — leave empty to hide the resume button
+    resume: "assets/Abergas_Resume.pdf", // shown as a Resume button in the hero and in Contact; set to "" to hide them
     links: [
       { label: "GitHub", url: "https://github.com/arianjander-abergas" },
       { label: "LinkedIn", url: "https://www.linkedin.com/in/arian-jander-abergas-6aa007414" },

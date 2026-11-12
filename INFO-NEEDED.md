@@ -10,8 +10,4 @@ Most of the site is filled in from the resume. These items are still missing or 
 - [ ] **Project screenshots:** save in `assets/` and set each project's `image`
 - [ ] **Microsoft Excel and Access certificate:** removed for now. To add it back, put it in `achievements` in `js/content.js` with its date, provider and picture.
 - [ ] **More seminars or awards:** add them to `seminars` or `achievements` in `js/content.js`
-- [ ] **Resume buttons:** save a PDF as `assets/resume.pdf` and set `contact.resume`. The file becomes public, so consider a version without your phone number and home address.
 - [ ] **Campus Event Hub link:** the repo is private, so the card has no link. Add one if you make it public or host a live demo.
-
-## Deployment
-- [ ] Make the Vercel site public: Project Settings, Deployment Protection, turn off Vercel Authentication

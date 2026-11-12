@@ -189,6 +189,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; lett
 .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--shade); }
 .btn--primary { background: var(--cta-bg); color: var(--cta-text); }
 .btn--ghost { background: var(--panel); color: var(--ink); }
+.btn--accent { background: var(--a1); color: var(--on-a1); }
+:root[data-theme="dark"] .btn--accent { background: var(--a2); color: var(--on-a2); }
 
 /* ---------- Hero ---------- */
 .hero {

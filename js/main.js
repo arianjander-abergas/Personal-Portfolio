@@ -113,6 +113,15 @@
   });
   $("heroRole").textContent = C.hero.role;
   $("heroTagline").textContent = C.hero.tagline;
+  // Resume button, to the right of "Contact me"
+  if (C.contact.resume) {
+    document
+      .querySelector(".hero__actions")
+      .insertAdjacentHTML(
+        "beforeend",
+        `<a class="btn btn--accent" href="${esc(C.contact.resume)}" target="_blank" rel="noopener">Resume</a>`
+      );
+  }
 
   $("aboutPhoto").innerHTML = C.about.photo
     ? `<img src="${esc(C.about.photo)}" alt="Portrait of ${esc(C.name)}">`

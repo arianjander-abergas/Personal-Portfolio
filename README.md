@@ -2,7 +2,7 @@
 
 A responsive personal portfolio website built with plain HTML, CSS and JavaScript, deployed on Vercel.
 
-**Live site:** https://personal-portfolio-ceh7.vercel.app
+**Live site:** https://ajca-portfolio.vercel.app
 
 ## Sections
 

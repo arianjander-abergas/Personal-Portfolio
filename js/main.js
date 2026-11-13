@@ -241,6 +241,86 @@
 
   $("footerText").textContent = `© ${new Date().getFullYear()} ${C.name}`;
 
+  /* ---------- Professional mode: cursors fly in, click, and the look changes ---------- */
+  const proBtn = $("proToggle");
+  const setStyle = (pro, remember) => {
+    if (pro) root.dataset.style = "pro";
+    else delete root.dataset.style;
+    const label = pro ? "Comic mode" : "Professional mode";
+    proBtn.setAttribute("aria-pressed", String(pro));
+    proBtn.querySelector("span").textContent = label;
+    proBtn.title = `Switch to ${label.toLowerCase()}`;
+    if (remember) {
+      try {
+        localStorage.setItem("style", pro ? "pro" : "comic");
+      } catch (e) {
+        /* storage unavailable: the choice just won't be remembered */
+      }
+    }
+  };
+  setStyle(root.dataset.style === "pro", false);
+
+  const CURSOR_SVG =
+    '<svg viewBox="0 0 24 24" width="34" height="34"><path d="M4 2l15 9.5-6.6 1.3 4 7.6-2.9 1.5-4-7.7L4 18.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  let swarmBusy = false;
+  proBtn.addEventListener("click", () => {
+    if (swarmBusy) return;
+    const toPro = root.dataset.style !== "pro";
+    if (reduceMotion) return setStyle(toPro, true);
+    swarmBusy = true;
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const count = W < 600 ? 6 : 10;
+    const layer = document.createElement("div");
+    layer.className = "cursor-swarm";
+    layer.setAttribute("aria-hidden", "true");
+    document.body.appendChild(layer);
+
+    const edge = (i) => {
+      const side = i % 4;
+      return {
+        x: side === 0 ? -70 : side === 1 ? W + 70 : Math.random() * W,
+        y: side === 2 ? -70 : side === 3 ? H + 70 : Math.random() * H,
+      };
+    };
+    for (let i = 0; i < count; i++) {
+      const last = i === count - 1;
+      // the last cursor lands in the middle and its click is the one that changes the look
+      const to = last ? { x: W / 2, y: H * 0.45 } : { x: W * (0.08 + 0.84 * Math.random()), y: H * (0.14 + 0.72 * Math.random()) };
+      const from = edge(i);
+      const out = edge(i + 1);
+      const cur = document.createElement("div");
+      cur.className = "cursor-swarm__c";
+      cur.innerHTML = CURSOR_SVG;
+      cur.style.transform = `translate(${from.x}px, ${from.y}px)`;
+      layer.appendChild(cur);
+
+      const start = 40 + i * 120;
+      setTimeout(() => (cur.style.transform = `translate(${to.x}px, ${to.y}px)`), start);
+      setTimeout(() => {
+        cur.classList.add("is-click");
+        const ring = document.createElement("div");
+        ring.className = "cursor-swarm__r" + (last ? " cursor-swarm__r--big" : "");
+        ring.style.left = `${to.x}px`;
+        ring.style.top = `${to.y}px`;
+        layer.appendChild(ring);
+        if (last) {
+          root.style.setProperty("--vx", `${to.x}px`);
+          root.style.setProperty("--vy", `${to.y}px`);
+          if (document.startViewTransition) document.startViewTransition(() => setStyle(toPro, true));
+          else setStyle(toPro, true);
+        }
+      }, start + 640);
+      setTimeout(() => cur.classList.remove("is-click"), start + 800);
+      setTimeout(() => (cur.style.transform = `translate(${out.x}px, ${out.y}px)`), start + (last ? 1500 : 1000));
+    }
+    setTimeout(() => {
+      layer.remove();
+      swarmBusy = false;
+    }, count * 120 + 2500);
+  });
+
   /* ---------- Mobile menu ---------- */
   const toggle = $("navToggle");
   const links = $("navLinks");

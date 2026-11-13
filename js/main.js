@@ -148,25 +148,44 @@
     )
     .join("");
 
+  // Project visuals: one screenshot in a browser window, or up to three as fanned phones. Each opens the viewer.
+  const projectMedia = (p) => {
+    const shots = p.shots || [];
+    if (!shots.length) return "";
+    const shot = (sh, cls) =>
+      `<button class="${cls}" type="button" data-full="${esc(sh.src)}" data-caption="${esc(`${p.title}: ${sh.caption}`)}" aria-label="View screenshot: ${esc(sh.caption)}">
+         <img src="${esc(sh.src)}" alt="${esc(`${p.title}, ${sh.caption}`)}" loading="lazy">
+       </button>`;
+    const inner =
+      p.device === "phone"
+        ? `<div class="phones">${shots.slice(0, 3).map((sh) => shot(sh, "phone")).join("")}</div>`
+        : shot(shots[0], "browser");
+    return `<div class="project__media">${inner}${
+      p.sticker ? `<span class="project__sticker" aria-hidden="true">${esc(p.sticker)}</span>` : ""
+    }</div>`;
+  };
   $("projectList").innerHTML = C.projects
-    .map(
-      (p, i) => `<article class="project reveal">
-        ${p.image ? `<img class="project__img" src="${esc(p.image)}" alt="Screenshot of ${esc(p.title)}" loading="lazy">` : ""}
-        <div class="project__meta"><span>${String(i + 1).padStart(2, "0")}</span><span>${esc(p.type)} · ${esc(p.year)}</span></div>
-        <h3>${esc(p.title)}</h3>
-        <p class="project__desc">${esc(p.description)}</p>
-        <p class="project__role"><strong>Role:</strong> ${esc(p.role)}</p>
-        <ul class="chips">${p.tech.map((t) => `<li class="chip">${esc(t)}</li>`).join("")}</ul>
-        ${p.highlights.length ? `<ul class="project__hl">${p.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
-        ${
-          p.links.length
-            ? `<div class="project__links">${p.links
-                .map((l) => `<a class="link" href="${esc(l.url)}"${ext(l.url)}>${esc(l.label)}</a>`)
-                .join("")}</div>`
-            : ""
-        }
-      </article>`
-    )
+    .map((p, i) => {
+      const media = projectMedia(p);
+      return `<article class="project reveal${media ? " has-media" : ""}">
+        ${media}
+        <div class="project__body">
+          <div class="project__meta"><span>${String(i + 1).padStart(2, "0")}</span><span>${esc(p.type)} · ${esc(p.year)}</span></div>
+          <h3>${esc(p.title)}</h3>
+          <p class="project__desc">${esc(p.description)}</p>
+          <p class="project__role"><strong>Role:</strong> ${esc(p.role)}</p>
+          <ul class="chips">${p.tech.map((t) => `<li class="chip">${esc(t)}</li>`).join("")}</ul>
+          ${p.highlights.length ? `<ul class="project__hl">${p.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+          ${
+            p.links.length
+              ? `<div class="project__links">${p.links
+                  .map((l) => `<a class="link" href="${esc(l.url)}"${ext(l.url)}>${esc(l.label)}</a>`)
+                  .join("")}</div>`
+              : ""
+          }
+        </div>
+      </article>`;
+    })
     .join("");
 
   // One card per certificate. Cards with an image get a thumbnail that opens the full-size viewer.
@@ -193,14 +212,14 @@
   $("seminarList").innerHTML = seminars.map(certCard).join("");
   if (!seminars.length) $("seminarCol").hidden = true;
 
-  /* ---------- Certificate viewer ---------- */
+  /* ---------- Picture viewer (certificates and project screenshots) ---------- */
   const lightbox = $("lightbox");
   document.addEventListener("click", (e) => {
-    const thumb = e.target.closest(".achievement__thumb");
+    const thumb = e.target.closest("[data-full]");
     if (!thumb) return;
     if (!lightbox.showModal) return window.open(thumb.dataset.full, "_blank", "noopener");
     $("lightboxImg").src = thumb.dataset.full;
-    $("lightboxImg").alt = `Certificate: ${thumb.dataset.caption}`;
+    $("lightboxImg").alt = thumb.dataset.caption;
     $("lightboxCap").textContent = thumb.dataset.caption;
     lightbox.showModal();
   });

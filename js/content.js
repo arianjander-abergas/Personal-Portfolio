@@ -52,12 +52,16 @@ const CONTENT = {
     { group: "Soft Skills", items: ["Leadership", "Problem-solving", "Customer service", "Creative thinking"] },
   ],
 
+  // "shots" are the screenshots (click to enlarge). device: "browser" shows the first shot in a browser window,
+  // "phone" shows up to three shots as fanned phones. "sticker" is the word in the starburst.
   projects: [
     {
       title: "Campus Event Hub",
       year: "2026",
       type: "Capstone Project",
-      image: "", // e.g. "assets/project-1.png" — optional
+      device: "browser",
+      sticker: "Capstone",
+      shots: [{ src: "assets/projects/campus-event-hub.jpg", caption: "Home page with the Event Hub Assistant" }],
       description:
         "A campus event platform for La Consolacion University Philippines. Students sign up with their school email, browse every event on one calendar, register, and evaluate the events they attended. Admins publish events, track registrations and attendance, and read reports.",
       role: "Group Leader & Lead Developer, team of five",
@@ -73,7 +77,9 @@ const CONTENT = {
       title: "Personal Portfolio Website",
       year: "2026",
       type: "Personal Project",
-      image: "",
+      device: "browser",
+      sticker: "Live!",
+      shots: [{ src: "assets/projects/portfolio.jpg", caption: "Home section" }],
       description:
         "This website: a responsive personal portfolio with a comic-book visual style, built with plain HTML, CSS and JavaScript and no frameworks.",
       role: "Designer & Developer",
@@ -82,20 +88,30 @@ const CONTENT = {
         "Comic-book look with ink outlines, halftone dots, speech bubbles and panel layouts",
         "Colour and black-and-white themes with a toggle that is remembered between visits",
       ],
-      links: [{ label: "GitHub", url: "https://github.com/arianjander-abergas/Personal-Portfolio" }],
+      links: [
+        { label: "Live site", url: "https://ajca-portfolio.vercel.app" },
+        { label: "GitHub", url: "https://github.com/arianjander-abergas/Personal-Portfolio" },
+      ],
     },
     {
-      title: "Android Mobile Apps",
+      title: "Travel Checklist",
       year: "2026",
-      type: "Course Activities",
-      image: "",
+      type: "Android App",
+      device: "phone",
+      sticker: "Android",
+      shots: [
+        { src: "assets/projects/travel-checklist-new-trip.jpg", caption: "New Trip screen" },
+        { src: "assets/projects/travel-checklist-trips.jpg", caption: "My Trips screen" },
+        { src: "assets/projects/travel-checklist-items.jpg", caption: "Packing checklist" },
+      ],
       description:
-        "A set of Android apps built in Kotlin for coursework, covering multi-screen navigation, form controls and local databases.",
+        "An Android app for planning what to pack. Create a trip with a destination and a travel style, pick the categories you need, then tick items off as you pack and watch the progress bar fill.",
       role: "Developer",
       tech: ["Kotlin", "XML Layouts", "SQLite", "Android Studio"],
       highlights: [
-        "A two-screen selection app using radio buttons and checkboxes that passes the user's choices to a scrollable results page",
-        "An app that queries names from an SQLite database and renders them as styled tiles in a two-column grid",
+        "Register and log in, with trips and items saved on the phone in an SQLite database",
+        "New trips choose a travel style with radio buttons and packing categories with checkboxes",
+        "Every trip shows how many items are packed, with a progress bar and percentage",
       ],
       links: [],
     },
@@ -110,6 +126,14 @@ const CONTENT = {
       issuer: "CloudSwyft Global Systems, Inc.",
       image: "assets/certificates/enterprise-security.jpg",
       link: "",
+    },
+    {
+      date: "October 2025",
+      kind: "Certificate",
+      title: "Foundational C# with Microsoft",
+      issuer: "freeCodeCamp and Microsoft",
+      image: "assets/certificates/foundational-csharp.jpg",
+      link: "https://freecodecamp.org/certification/arianjanderabergas/foundational-c-sharp-with-microsoft",
     },
   ],
 

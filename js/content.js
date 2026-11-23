@@ -120,6 +120,14 @@ const CONTENT = {
   // Left column. "image" is the certificate picture (optional); "link" is a verification page (optional).
   achievements: [
     {
+      date: "November 2026",
+      kind: "Certification",
+      title: "Information Technology Specialist: Device Configuration and Management",
+      issuer: "Certiport (Pearson VUE) · Verification code wEDY4-48ev",
+      image: "assets/certificates/device-configuration.jpg",
+      link: "https://verify.certiport.com",
+    },
+    {
       date: "April 2026",
       kind: "Certificate",
       title: "Fundamentals of Enterprise Security",

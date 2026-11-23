@@ -228,7 +228,9 @@
 
   $("contactBlurb").textContent = C.contact.blurb;
   $("contactActions").innerHTML =
-    `<a class="btn btn--primary" href="mailto:${esc(C.contact.email)}">${esc(C.contact.email)}</a>` +
+    `<a class="btn btn--primary" id="emailBtn" href="mailto:${esc(C.contact.email)}" aria-haspopup="dialog" title="Send me a message">` +
+    `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 5.5h18v13H3zM3 6l9 7 9-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>` +
+    `${esc(C.contact.email)}</a>` +
     (C.contact.resume
       ? `<a class="btn btn--ghost" href="${esc(C.contact.resume)}" target="_blank" rel="noopener">View resume</a>
          <a class="btn btn--ghost" href="${esc(C.contact.resume)}" download>Download PDF</a>`
@@ -238,6 +240,205 @@
     .filter((l) => isUrl(l.url))
     .map((l) => `<li><a class="link" href="${esc(l.url)}"${ext(l.url)}>${esc(l.label)}</a></li>`)
     .join("");
+
+  /* ---------- Contact background: only animate while the section is on screen ---------- */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) =>
+      entries.forEach((en) => en.target.classList.toggle("is-onscreen", en.isIntersecting))
+    ).observe($("contact"));
+  } else {
+    $("contact").classList.add("is-onscreen");
+  }
+
+  /* ---------- Message pop-up: write to me and attach files without leaving the site ---------- */
+  const mailbox = $("mailbox");
+  const mailto = (subject, body) =>
+    `mailto:${C.contact.email}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body.slice(0, 1500))}` : ""}`;
+  $("mailboxDirect").href = mailto("Hello from your portfolio");
+  const formCfg = C.contact.form;
+  if (formCfg && formCfg.endpoint && typeof mailbox.showModal === "function") {
+    const mf = $("mailboxForm");
+    const status = $("mailboxStatus");
+    const sendBtn = $("mailboxSend");
+    const fileInput = $("mailboxFiles");
+    const fileList = $("fileList");
+    const drop = $("dropzone");
+    const done = $("mailboxDone");
+    const emailBtn = $("emailBtn");
+    const field = (n) => mf.elements[n];
+    const MAX_FILES = formCfg.maxFiles || 3;
+    const MAX_MB = formCfg.maxTotalMB || 3;
+    const OK_EXT = /\.(pdf|png|jpe?g|gif|webp|heic|docx?|xlsx?|pptx?|txt|csv|rtf|odt|zip)$/i;
+    const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    let files = [];
+    let openedAt = 0;
+
+    const fmtSize = (b) => (b < 1048576 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1048576).toFixed(1)} MB`);
+    // msg must already be escaped (it may contain a link)
+    const setStatus = (msg, kind) => {
+      status.innerHTML = msg;
+      status.className = "mailbox__status" + (kind ? ` is-${kind}` : "");
+    };
+    const renderFiles = () => {
+      fileList.innerHTML = files
+        .map(
+          (f, i) =>
+            `<li><span>${esc(f.name)}</span><small>${fmtSize(f.size)}</small>` +
+            `<button type="button" data-remove="${i}" aria-label="Remove ${esc(f.name)}">&#10005;</button></li>`
+        )
+        .join("");
+    };
+    const addFiles = (list) => {
+      const problems = [];
+      for (const f of list) {
+        const used = files.reduce((sum, x) => sum + x.size, 0);
+        if (files.some((x) => x.name === f.name && x.size === f.size)) continue;
+        if (!OK_EXT.test(f.name)) problems.push(`"${esc(f.name)}" isn't a file type I can accept.`);
+        else if (!f.size) problems.push(`"${esc(f.name)}" is empty.`);
+        else if (files.length >= MAX_FILES) problems.push(`You can attach up to ${MAX_FILES} files.`);
+        else if (used + f.size > MAX_MB * 1048576) problems.push(`"${esc(f.name)}" would take the attachments over ${MAX_MB} MB.`);
+        else files.push(f);
+      }
+      renderFiles();
+      setStatus([...new Set(problems)].join(" "), problems.length ? "error" : "");
+    };
+    const readFile = (f) =>
+      new Promise((resolve, reject) => {
+        const rd = new FileReader();
+        rd.onload = () => resolve({ name: f.name, data: String(rd.result).split(",")[1] || "" });
+        rd.onerror = () => reject(rd.error);
+        rd.readAsDataURL(f);
+      });
+
+    fileInput.addEventListener("change", () => {
+      addFiles([...fileInput.files]);
+      fileInput.value = "";
+    });
+    fileList.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-remove]");
+      if (!b) return;
+      files.splice(Number(b.dataset.remove), 1);
+      renderFiles();
+      setStatus("");
+    });
+    // Files can be dropped anywhere on the pop-up.
+    mailbox.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      drop.classList.add("is-over");
+    });
+    mailbox.addEventListener("dragleave", (e) => {
+      if (!e.relatedTarget || !mailbox.contains(e.relatedTarget)) drop.classList.remove("is-over");
+    });
+    mailbox.addEventListener("drop", (e) => {
+      e.preventDefault();
+      drop.classList.remove("is-over");
+      if (!mf.hidden && e.dataTransfer && e.dataTransfer.files.length) addFiles([...e.dataTransfer.files]);
+    });
+    mf.addEventListener("input", (e) => e.target.removeAttribute("aria-invalid"));
+
+    const openMailbox = () => {
+      mf.hidden = false;
+      done.hidden = true;
+      openedAt = Date.now();
+      mailbox.showModal();
+      (field("name").value ? field("message") : field("name")).focus();
+    };
+    emailBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openMailbox();
+    });
+    $("mailboxClose").addEventListener("click", () => mailbox.close());
+    $("mailboxDoneClose").addEventListener("click", () => mailbox.close());
+    mailbox.addEventListener("close", () => emailBtn.focus());
+    // A click that starts and ends outside the panel closes it. What was typed is kept for next time.
+    const outside = (e) => {
+      const r = mailbox.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let downOutside = false;
+    mailbox.addEventListener("mousedown", (e) => (downOutside = e.target === mailbox && outside(e)));
+    mailbox.addEventListener("click", (e) => {
+      if (downOutside && e.target === mailbox && outside(e)) mailbox.close();
+      downOutside = false;
+    });
+
+    mf.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (sendBtn.disabled) return;
+      const checks = [
+        ["name", (v) => v.length > 0, "Please add your name."],
+        ["email", (v) => EMAIL_OK.test(v), "Please add an email address I can reply to."],
+        ["message", (v) => v.length > 0, "Please write a message."],
+      ];
+      const problems = [];
+      let firstBad = null;
+      for (const [n, ok, msg] of checks) {
+        const el = field(n);
+        const good = ok(el.value.trim());
+        el.setAttribute("aria-invalid", String(!good));
+        if (!good) {
+          problems.push(msg);
+          firstBad = firstBad || el;
+        }
+      }
+      if (firstBad) {
+        setStatus(problems.map(esc).join(" "), "error");
+        firstBad.focus();
+        return;
+      }
+
+      const name = field("name").value.trim();
+      const email = field("email").value.trim();
+      const subject = field("subject").value.trim();
+      const message = field("message").value.trim();
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending…";
+      mf.classList.add("is-sending");
+      setStatus(files.length ? "Packing your files…" : "");
+      try {
+        const attachments = await Promise.all(files.map(readFile));
+        setStatus("");
+        const r = await fetch(formCfg.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name, email, subject, message, attachments,
+            company: field("company").value,
+            elapsed: Date.now() - openedAt,
+          }),
+        });
+        const data = await r.json().catch(() => null);
+        if (r.ok && data && data.ok) {
+          mf.reset();
+          files = [];
+          renderFiles();
+          setStatus("");
+          $("mailboxDoneText").textContent = `Thanks, ${name}! Your message is on its way. I'll reply to ${email}.`;
+          mf.hidden = true;
+          done.hidden = false;
+          $("mailboxDoneClose").focus();
+          return;
+        }
+        if (data && data.error && [400, 413, 429].includes(r.status)) {
+          setStatus(esc(data.error), "error");
+          return;
+        }
+        throw new Error(`message service answered ${r.status}`);
+      } catch (err) {
+        // The service isn't reachable or isn't set up: offer the visitor's own email app with the message filled in.
+        setStatus(
+          `Sorry, the message couldn't be sent from here right now. Please ` +
+            `<a href="${esc(mailto(subject || "Hello from your portfolio", `${message}\n\n${name}`))}">email me directly</a> ` +
+            `at ${esc(C.contact.email)}${files.length ? " and attach your files there" : ""}.`,
+          "error"
+        );
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send it!";
+        mf.classList.remove("is-sending");
+      }
+    });
+  }
 
   $("footerText").textContent = `© ${new Date().getFullYear()} ${C.name}`;
 

@@ -176,6 +176,9 @@ const CONTENT = {
   contact: {
     blurb: "Looking for someone in software, website, full stack development or IT support, or have a question about my work? My inbox is open.",
     email: "arianjanderabergas@gmail.com",
+    // The email button opens a pop-up that sends the message (and attachments) through api/contact.js.
+    // Set form to null to make the button a plain mailto: link again.
+    form: { endpoint: "/api/contact", maxFiles: 3, maxTotalMB: 3 },
     resume: "assets/Abergas_Resume.pdf", // shown as a Resume button in the hero and in Contact; set to "" to hide them
     links: [
       { label: "GitHub", url: "https://github.com/arianjander-abergas" },

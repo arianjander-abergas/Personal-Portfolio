@@ -11,11 +11,12 @@ A responsive personal portfolio website built with plain HTML, CSS and JavaScrip
 3. **Skills** – technical and programming skills
 4. **Projects** – completed projects and activities
 5. **Achievements & Seminars** – certificates on the left, seminars on the right, each with a viewable certificate
-6. **Contact Me** – email and professional links
+6. **Contact Me** – animated comic background, a message pop-up that emails me (with attachments), and professional links
 
 ## Built with
 
 - HTML5, CSS3, JavaScript (no frameworks, no build step)
+- A Vercel serverless function (`api/contact.js`, Node.js with Nodemailer) that sends contact-form messages and attachments to my Gmail
 - Google Fonts (Bangers, Comic Neue)
 - Comic-book visual style: ink outlines, halftone dots, speech bubbles and panel layouts
 - View counter in the top-left corner (count kept by the free Abacus counter service)
@@ -29,4 +30,6 @@ css/styles.css      styles, animations, responsive layout
 js/content.js       all personal content (edit this file to update the site)
 js/main.js          rendering, navigation and interactions
 assets/             images, favicon, resume
+api/contact.js      contact form endpoint (runs on Vercel)
+package.json        the function's one dependency (Nodemailer)
 ```

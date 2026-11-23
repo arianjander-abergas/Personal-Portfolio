@@ -576,9 +576,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; lett
 /* ---------- Contact ---------- */
 .contact {
   position: relative; overflow: hidden; text-align: center;
-  background: radial-gradient(var(--dot-on-a1) 1.5px, transparent 1.6px) 0 0 / 14px 14px, var(--contact-bg) !important;
+  background: var(--contact-bg) !important;
 }
-.contact__inner { position: relative; display: flex; flex-direction: column; align-items: center; }
+.contact__inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
 .contact__title {
   font-size: clamp(3.4rem, 13vw, 8.5rem); margin: 1rem 0 1.5rem;
   text-shadow: 5px 5px 0 var(--contact-title-shadow);
@@ -591,6 +591,143 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; lett
 }
 .contact__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin: 2.25rem 0 1.25rem; max-width: 100%; }
 .contact__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.25rem; }
+
+/* animated background: spinning rays, drifting halftone and floating sound effects */
+.contact { --contact-ray: rgba(255, 255, 255, 0.3); }
+:root[data-theme="dark"] .contact { --contact-ray: rgba(0, 0, 0, 0.055); --on-a2: #ffffff; }
+.contact::before { /* the small halftone dots, drifting */
+  content: ""; position: absolute; inset: -14px 0 0 -14px; pointer-events: none;
+  background: radial-gradient(var(--dot-on-a1) 1.5px, transparent 1.6px) 0 0 / 14px 14px;
+  animation: dots-drift 4s linear infinite paused;
+}
+.contact.is-onscreen::before { animation-play-state: running; }
+@keyframes dots-drift { to { transform: translate(14px, 14px); } }
+.contact__fx { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.contact__fx > * { animation-play-state: paused !important; }
+.contact.is-onscreen .contact__fx > * { animation-play-state: running !important; }
+.contact__rays {
+  position: absolute; left: 50%; top: 40%; width: 260vmax; height: 260vmax; margin: -130vmax 0 0 -130vmax;
+  background: repeating-conic-gradient(var(--contact-ray) 0 7deg, transparent 7deg 14deg);
+  animation: spin 140s linear infinite; will-change: transform;
+}
+.contact__shade {
+  position: absolute; inset: -32px;
+  background: radial-gradient(var(--dot-on-a1) 3px, transparent 3.3px) 0 0 / 16px 16px;
+  -webkit-mask-image: radial-gradient(circle at 0 100%, #000, transparent 45%), radial-gradient(circle at 100% 0, #000, transparent 45%);
+  mask-image: radial-gradient(circle at 0 100%, #000, transparent 45%), radial-gradient(circle at 100% 0, #000, transparent 45%);
+  animation: shade-drift 5s linear infinite;
+}
+@keyframes shade-drift { to { transform: translate(16px, -16px); } }
+.fx { position: absolute; --r: 0deg; filter: drop-shadow(4px 4px 0 var(--shade)); animation: fx-float 6s ease-in-out infinite; }
+.fx b {
+  display: grid; place-items: center; width: clamp(96px, 9vw, 128px); aspect-ratio: 1;
+  font-family: var(--display); font-weight: 400; font-size: clamp(1.15rem, 1.8vw, 1.6rem); letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--panel); color: var(--ink);
+  clip-path: polygon(50% 0%, 61% 17%, 79% 7%, 80% 27%, 100% 28%, 88% 45%, 100% 61%, 81% 66%, 85% 86%, 65% 80%, 55% 100%, 43% 81%, 24% 92%, 24% 71%, 3% 70%, 15% 53%, 0% 38%, 20% 31%, 17% 10%, 37% 18%);
+}
+.fx--1 { top: 12%; left: 4%; --r: -12deg; }
+.fx--1 b { background: var(--a2); color: var(--on-a2); }
+.fx--2 { top: 16%; right: 5%; --r: 10deg; animation-duration: 7s; animation-delay: -2s; }
+.fx--3 { bottom: 12%; left: 7%; --r: 8deg; animation-duration: 6.5s; animation-delay: -4s; }
+.fx--3 b { background: var(--a3); color: var(--on-a3); }
+.fx--4 { bottom: 16%; right: 6%; --r: -8deg; animation-duration: 7.5s; animation-delay: -1s; }
+@keyframes fx-float {
+  0%, 100% { transform: translateY(0) rotate(var(--r)) scale(1); }
+  45% { transform: translateY(-16px) rotate(calc(var(--r) * -0.6)) scale(1.05); }
+  50% { transform: translateY(-18px) rotate(calc(var(--r) * -0.6)) scale(1.14); }
+  55% { transform: translateY(-16px) rotate(calc(var(--r) * -0.6)) scale(1.05); }
+}
+@media (max-width: 1099px) { .fx { display: none; } }
+.contact .btn svg { flex: none; }
+
+/* ---------- Message pop-up ---------- */
+.mailbox {
+  width: min(94vw, 620px); max-height: 92vh; padding: 0; overflow: auto; overscroll-behavior: contain;
+  background: var(--panel); color: var(--ink);
+  border: var(--border); border-radius: var(--radius); box-shadow: 10px 10px 0 var(--shade);
+}
+.mailbox::backdrop { background: rgba(0, 0, 0, 0.62); }
+.mailbox[open] { animation: mailbox-pop 0.38s cubic-bezier(0.3, 1.4, 0.5, 1); }
+@keyframes mailbox-pop { from { opacity: 0; transform: scale(0.86) rotate(-2deg); } }
+.mailbox [hidden] { display: none !important; }
+.mailbox__close { position: absolute; top: 12px; right: 12px; z-index: 2; background: var(--panel); color: var(--ink); border-color: var(--ink); font-size: 1.1rem; font-weight: 700; }
+.mailbox__head {
+  padding: 1.2rem 4.25rem 1.1rem 1.4rem; border-bottom: var(--border); text-align: left;
+  background: radial-gradient(var(--dot-on-a1) 1.5px, transparent 1.6px) 0 0 / 12px 12px, var(--a1); color: var(--on-a1);
+}
+.mailbox__head h2 { font-size: clamp(2rem, 6vw, 2.6rem); }
+.mailbox__head p { margin-top: 0.35rem; font-weight: 700; }
+.mailbox__body { display: grid; gap: 0.95rem; padding: 1.2rem 1.4rem 1.4rem; }
+.mailbox__row { display: grid; gap: 0.95rem; }
+@media (min-width: 560px) { .mailbox__row { grid-template-columns: 1fr 1fr; } }
+.field { display: grid; gap: 0.3rem; text-align: left; min-width: 0; }
+.field > span { font-family: var(--display); font-size: 1.1rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.field em { font-family: var(--body); font-size: 0.85rem; font-style: normal; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.field input, .field textarea {
+  width: 100%; min-height: 46px; padding: 0.6rem 0.8rem; font: inherit; color: var(--ink);
+  background: var(--paper); border: var(--border); border-radius: 10px;
+}
+.field textarea { min-height: 130px; resize: vertical; }
+.field [aria-invalid="true"] { border-color: var(--a2); box-shadow: 0 0 0 3px var(--a2); }
+.dropzone {
+  position: relative; display: grid; justify-items: center; gap: 0.15rem; padding: 1rem; text-align: center; cursor: pointer;
+  background: var(--paper); border: 3px dashed var(--ink); border-radius: 10px;
+  transition: background 0.15s, color 0.15s, transform 0.15s var(--ease);
+}
+.dropzone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.dropzone:focus-within { outline: 3px solid var(--focus); outline-offset: 3px; }
+.dropzone small { color: var(--muted); font-size: 0.85rem; }
+.dropzone.is-over { background: var(--a1); color: var(--on-a1); transform: rotate(-1deg) scale(1.01); }
+.dropzone.is-over small { color: inherit; }
+.filelist { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+.filelist:empty { display: none; }
+.filelist li {
+  display: inline-flex; align-items: center; gap: 0.45rem; max-width: 100%; min-width: 0;
+  padding: 0.15rem 0.2rem 0.15rem 0.8rem; font-size: 0.92rem; font-weight: 700;
+  background: var(--paper); border: 2px solid var(--ink); border-radius: 999px;
+}
+.filelist li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filelist small { flex: none; color: var(--muted); font-weight: 400; }
+.filelist button {
+  flex: none; width: 32px; height: 32px; padding: 0; cursor: pointer;
+  border: 0; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 700;
+}
+.mailbox__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.mailbox__status { font-weight: 700; text-align: left; }
+.mailbox__status:empty { display: none; }
+.mailbox__status.is-error { padding: 0.6rem 0.8rem; border: 2px solid var(--a2); border-radius: 10px; }
+.mailbox__status a { text-decoration: underline; text-decoration-thickness: 2px; }
+.mailbox__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; }
+.mailbox__actions .btn { min-width: 9rem; }
+.mailbox__form.is-sending .mailbox__body > :not(.mailbox__actions) { opacity: 0.6; pointer-events: none; }
+.mailbox__done { display: grid; justify-items: center; gap: 1.1rem; padding: 2.75rem 1.5rem 2rem; text-align: center; }
+.mailbox__done p { max-width: 36ch; font-size: 1.15rem; font-weight: 700; }
+.mailbox__burst {
+  display: grid; place-items: center; width: 170px; aspect-ratio: 1;
+  font-family: var(--display); font-size: 2.6rem; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--a1); color: var(--on-a1); filter: drop-shadow(5px 5px 0 var(--shade));
+  clip-path: polygon(50% 0%, 61% 17%, 79% 7%, 80% 27%, 100% 28%, 88% 45%, 100% 61%, 81% 66%, 85% 86%, 65% 80%, 55% 100%, 43% 81%, 24% 92%, 24% 71%, 3% 70%, 15% 53%, 0% 38%, 20% 31%, 17% 10%, 37% 18%);
+  animation: pop 2.6s var(--ease) infinite;
+}
+
+/* professional mode */
+:root[data-style="pro"] .mailbox { box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.35); }
+:root[data-style="pro"] .mailbox[open] { animation: mailbox-fade 0.25s ease-out; }
+@keyframes mailbox-fade { from { opacity: 0; transform: translateY(10px); } }
+:root[data-style="pro"] .mailbox__head { background: var(--panel); color: var(--ink); }
+:root[data-style="pro"] .mailbox__head h2 { font-size: 1.6rem; }
+:root[data-style="pro"] .mailbox__head p { font-weight: 400; color: var(--muted); }
+:root[data-style="pro"] .field > span { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; }
+:root[data-style="pro"] .field [aria-invalid="true"] { box-shadow: none; border-color: #dc2626; }
+:root[data-style="pro"] .dropzone { border: 1px dashed var(--muted); }
+:root[data-style="pro"] .dropzone.is-over { transform: none; }
+:root[data-style="pro"] .filelist li { border: 1px solid var(--line); font-weight: 500; }
+:root[data-style="pro"] .mailbox__status.is-error { border: 1px solid #dc2626; font-weight: 500; }
+:root[data-style="pro"] .mailbox__close { border: 1px solid var(--line); }
+:root[data-style="pro"] .mailbox__burst {
+  width: 84px; clip-path: none; border-radius: 50%; filter: none; animation: none;
+  font: 600 1rem var(--body); letter-spacing: 0; text-transform: none; background: var(--ink); color: var(--paper);
+}
 
 /* ---------- Footer ---------- */
 .footer {
@@ -741,7 +878,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; lett
 /* no tilts, bursts, rays or stickers */
 :root[data-style="pro"] :is(.nav__brand, .section__num, .about__photo.is-visible, .about__edu .label, .skill-card .label, .badge,
   .split__title.is-visible, .browser, .project:nth-child(even) .browser, .hint, .pro-toggle, .icon-btn, .to-top.is-visible) { transform: none; animation: none; }
-:root[data-style="pro"] :is(.blob--a, .about__burst, .about__caption, .project__sticker) { display: none; }
+:root[data-style="pro"] :is(.blob--a, .about__burst, .about__caption, .project__sticker, .contact__fx) { display: none; }
+:root[data-style="pro"] .contact::before { display: none; }
 :root[data-style="pro"] :is(.hero, .project, .hero__role, .about__photo.has-photo)::before,
 :root[data-style="pro"] :is(.hero, .hero__role)::after { display: none; }
 /* thin lines everywhere */
@@ -758,7 +896,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; lett
 :root[data-style="pro"] .nav__links a { font-weight: 500; font-size: 0.9rem; color: var(--muted); }
 :root[data-style="pro"] .nav__links a:hover { transform: none; border-color: transparent; color: var(--ink); }
 :root[data-style="pro"] .nav__links a.is-active { color: var(--ink); border-color: transparent; }
-:root[data-style="pro"] .nav__links .nav__cta, :root[data-style="pro"] .nav__links .nav__cta:hover { color: var(--cta-text); border-color: var(--cta-bg); }
+:root[data-style="pro"] .nav__links a.nav__cta, :root[data-style="pro"] .nav__links a.nav__cta.is-active, :root[data-style="pro"] .nav__links a.nav__cta:hover { color: var(--cta-text); border-color: var(--cta-bg); }
 :root[data-style="pro"] .icon-btn { width: 40px; height: 40px; background: var(--panel); color: var(--ink); }
 :root[data-style="pro"] .nav__toggle span { background: var(--ink); left: 10px; right: 10px; height: 2px; }
 :root[data-style="pro"] .progress { height: 2px; border: 0; }

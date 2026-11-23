@@ -133,6 +133,14 @@
 
     <!-- 6. CONTACT -->
     <section class="section contact" id="contact">
+      <div class="contact__fx" aria-hidden="true">
+        <span class="contact__rays"></span>
+        <span class="contact__shade"></span>
+        <span class="fx fx--1"><b>Hello!</b></span>
+        <span class="fx fx--2"><b>Pow!</b></span>
+        <span class="fx fx--3"><b>Zap!</b></span>
+        <span class="fx fx--4"><b>Wow!</b></span>
+      </div>
       <div class="wrap contact__inner reveal">
         <span class="section__num">05</span>
         <h2 class="contact__title">Get in <span class="grad">touch</span></h2>
@@ -142,6 +150,45 @@
       </div>
     </section>
   </main>
+
+  <!-- message pop-up: opens from the email button in Contact -->
+  <dialog class="mailbox" id="mailbox" aria-labelledby="mailboxTitle">
+    <button class="icon-btn mailbox__close" type="button" id="mailboxClose" aria-label="Close">&#10005;</button>
+    <form class="mailbox__form" id="mailboxForm" novalidate>
+      <div class="mailbox__head">
+        <h2 id="mailboxTitle">Send me a message</h2>
+        <p>It goes straight to my inbox, and I'll reply to the email you give.</p>
+      </div>
+      <div class="mailbox__body">
+        <div class="mailbox__row">
+          <label class="field"><span>Your name</span><input name="name" autocomplete="name" maxlength="100" required></label>
+          <label class="field"><span>Your email</span><input name="email" type="email" autocomplete="email" maxlength="200" required></label>
+        </div>
+        <label class="field"><span>Subject <em>(optional)</em></span><input name="subject" maxlength="150"></label>
+        <label class="field"><span>Message</span><textarea name="message" rows="5" maxlength="5000" required></textarea></label>
+        <div class="field">
+          <span id="filesLabel">Attachments <em>(optional: up to 3 files, 3 MB in total)</em></span>
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="mailboxFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.heic,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.zip" aria-labelledby="filesLabel">
+            <span><strong>Drop files here</strong> or <u>browse</u></span>
+            <small>PDF, images, Word, Excel, PowerPoint, text or ZIP</small>
+          </label>
+          <ul class="filelist" id="fileList"></ul>
+        </div>
+        <label class="mailbox__hp" aria-hidden="true">Company <input name="company" tabindex="-1" autocomplete="off"></label>
+        <p class="mailbox__status" id="mailboxStatus" role="status" aria-live="polite"></p>
+        <div class="mailbox__actions">
+          <button class="btn btn--primary" type="submit" id="mailboxSend">Send it!</button>
+          <a class="link" id="mailboxDirect" href="#">Use my own email app instead</a>
+        </div>
+      </div>
+    </form>
+    <div class="mailbox__done" id="mailboxDone" hidden>
+      <span class="mailbox__burst">Sent!</span>
+      <p id="mailboxDoneText"></p>
+      <button class="btn btn--ghost" type="button" id="mailboxDoneClose">Close</button>
+    </div>
+  </dialog>
 
   <!-- full-size certificate viewer -->
   <dialog class="lightbox" id="lightbox" aria-labelledby="lightboxCap">
